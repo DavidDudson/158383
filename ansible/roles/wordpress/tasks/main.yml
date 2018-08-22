@@ -1,0 +1,36 @@
+---
+- name: Download WordPress
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp
+
+- name: Extract archive
+  unarchive:
+    src: /tmp/latest.tar.gz
+    dest:  /var/www/html
+
+- name: Create WordPress database
+  mysql_db:
+    name: {{ wp_db_name }}
+    state: present
+
+- name: Create WordPress database user
+  mysql_user:
+    name: {{ wp_db_user }}
+    password: {{ wp_db_password }}
+    priv: {{ wp_db_name }}.*:ALL
+    host: 'localhost'
+    state: present
+
+- name: Copy WordPress config file
+  template:
+    src: wp-config.php
+    dest: /var/www/html
+
+- name: Restart apache and mysql
+  service:
+    name: item
+    state: restarted
+  with_items:
+    - my_sql
+    - apache2

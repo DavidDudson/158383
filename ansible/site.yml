@@ -1,0 +1,15 @@
+---
+- name: Spawn new wordpress aws instance
+  hosts: all
+  remote_user: root
+
+  environment:
+    TERM: linux
+    DEBIAN_FRONTEND: noninteractive
+  roles:
+    - aws
+    - common
+    - php
+    - apache
+    - mysql
+    - wordpress

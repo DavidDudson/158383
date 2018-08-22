@@ -1,0 +1,13 @@
+---
+- name: Ensure apache packages are installed
+  apt:
+    name: {{item}}
+    state: present
+  with_items:
+    - apache2
+    - libapache2-mod-php7.2
+
+- name: Start apache
+  service:
+    name: apache2
+    state: started
