@@ -1,4 +1,4 @@
-# !/usr/bin/env bash
+#!/bin/bash
 # Script for installing the required software to the master machine
 # Set Up Awscli then run the playbook
 
