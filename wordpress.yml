@@ -6,7 +6,6 @@
     tags: deployment
     
     vars:           
-    
       image: ami-ba602bc2 
       securityGroup: slave-server 
       instanceType: t2.micro 
