@@ -54,9 +54,9 @@ if [[ ! -v $WORDPRESS_DB_HOST ]]; then
   echo "Wordpress DB host unspecified. Using: '${WORDPRESS_DB_HOST}'"
 fi
 
-if [[ ! -v $WORDPRESS_SALTS ]]; then
-  WORDPRESS_SALTS='some salted passphrase'
-  echo "Wordpress Salts unspecified. Using: '${WORDPRESS_SALTS}'"
+if [[ ! -v $WORDPRESS_DB_SALT ]]; then
+  WORDPRESS_DB_SALT='some salted passphrase'
+  echo "Wordpress Salts unspecified. Using: '${WORDPRESS_DB_SALT}'"
   echo -e "\e[33mWarn: Ideally these should not be the same, feel free to change them after.\e[0m"
 fi
 
@@ -86,7 +86,7 @@ eval debconf-set-selections <<< "tzdata tzdata/Areas select ${REGION}"
 
 echo "5. Installing Apache"
 
-eval apt-get install -y apache2 libapache2-mod-php7.0 $SILENCE
+eval apt-get install -y apache2 $SILENCE
 
 echo "6. Starting Apache"
 
@@ -96,13 +96,13 @@ else
   eval systemctl start apache2 $SILENCE
 fi
 
-echo "7. Installing PHP 7"
-
-eval apt-get install -y php7.0 php7.0-curl php7.0-gd php7.0-json php7.0-mbstring $SILENCE
-
 echo "8. Installing MySql"
 
-eval apt-get install -y mysql-server php7.0-mysql $SILENCE
+eval apt-get install -y mysql-server $SILENCE
+
+echo "7. Installing PHP 7"
+
+eval apt-get install -y php7.0 libapache2-mod-php7.0 php7.0-mbstring php7.0-xml php7.0-mysql php7.0-common php7.0-gd php7.0-json php7.0-cli php7.0-curl $SILENCE
 
 echo "9. Installing PHPMyAdmin"
 
@@ -137,7 +137,11 @@ echo "14. Creating htaccess"
 
 eval touch /var/www/html/.htaccess $SILENCE
 
-eval chmod 660 /var/www/html/.htaccess $SILENCE
+eval chmod 644 /var/www/html/.htaccess $SILENCE
+
+echo "DirectoryIndex index.php" >  /var/www/html/.htaccess
+
+sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
 echo "15. Copying example config"
 
@@ -152,7 +156,7 @@ define('DB_HOST', '${WORDPRESS_DB_HOST}');
 define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', '');
 define('AUTH_KEY',         '${WORDPRESS_DB_SALT}');
-define('SECURE_AUTH_KEY',  '${WORDPRESS_DB_SALT});
+define('SECURE_AUTH_KEY',  '${WORDPRESS_DB_SALT}');
 define('LOGGED_IN_KEY',    '${WORDPRESS_DB_SALT}');
 define('NONCE_KEY',        '${WORDPRESS_DB_SALT}');
 define('AUTH_SALT',        '${WORDPRESS_DB_SALT}');
@@ -166,14 +170,11 @@ if ( !defined('ABSPATH') )
 
 require_once(ABSPATH . 'wp-settings.php');" > /var/www/html/wp-config.php
 
-echo "15. Setup MySQL Wordpress tables"
+echo "16. Setup MySQL Wordpress tables"
 
-eval mysql -u "root" -p${MYSQL_PASSWORD} -e "CREATE DATABASE ${WORDPRESS_DB_NAME}" $SILENCE
-eval mysql -u "root" -p${MYSQL_PASSWORD} -e "CREATE USER '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}' IDENTIFIED BY '${WORDPRESS_DB_USER_PASSWORD}'" $SILENCE
-eval mysql -u "root" -p${MYSQL_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}'" $SILENCE
-eval mysql -u "root" -p${MYSQL_PASSWORD} -e "FLUSH PRIVILEGES" $SILENCE
+mysql -u "root" --password="${MYSQL_PASSWORD}" -Bse "CREATE DATABASE ${WORDPRESS_DB_NAME};CREATE USER '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}' IDENTIFIED BY '${WORDPRESS_DB_USER_PASSWORD}';GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}';FLUSH PRIVILEGES"
 
-echo "16. Restarting Apache and MySQL"
+echo "17. Restarting Apache and MySQL"
 
 if ! $USE_SYSTEMD; then
   eval service apache2 restart $SILENCE
