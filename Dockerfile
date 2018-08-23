@@ -1,5 +1,7 @@
-FROM ubuntu:latest
+FROM ubuntu:16.04
 
 COPY ./setup.sh .
 
-CMD ./setup.sh
+RUN ./setup.sh
+
+CMD service start mysql && service start apache2

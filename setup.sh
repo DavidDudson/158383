@@ -10,13 +10,13 @@ fi
 
 echo -e "Setup: \n"
 
-if which systemctl 2>&1 > /dev/null; then
-  echo "Init System: SystemD"
-  USE_SYSTEMD=true
-else
+if which service 2>&1 > /dev/null; then
   # Used in docker ubuntu images
   echo "Init System: Upstart/Initd"
   USE_SYSTEMD=false
+else
+  echo "Init System: SystemD"
+  USE_SYSTEMD=true
 fi
 
 if [[ ! -v $MYSQL_PASSWORD ]]; then
@@ -86,7 +86,7 @@ eval debconf-set-selections <<< "tzdata tzdata/Areas select ${REGION}"
 
 echo "5. Installing Apache"
 
-eval apt-get install -y apache2 libapache2-mod-php7.2 $SILENCE
+eval apt-get install -y apache2 libapache2-mod-php7.0 $SILENCE
 
 echo "6. Starting Apache"
 
@@ -98,17 +98,17 @@ fi
 
 echo "7. Installing PHP 7"
 
-eval apt-get install -y php7.2 php7.2-curl php7.2-gd php7.2-json php7.2-mbstring $SILENCE
+eval apt-get install -y php7.0 php7.0-curl php7.0-gd php7.0-json php7.0-mbstring $SILENCE
 
 echo "8. Installing MySql"
 
-eval apt-get install -y mysql-server php7.2-mysql $SILENCE
+eval apt-get install -y mysql-server php7.0-mysql $SILENCE
 
 echo "9. Installing PHPMyAdmin"
 
 eval apt-get install -y phpmyadmin $SILENCE
 
-echo "10. Restarting Apache and MysSQL"
+echo "10. Restarting Apache and MySQL"
 
 if ! $USE_SYSTEMD; then
   eval service apache2 restart $SILENCE
@@ -127,7 +127,7 @@ fi
 
 echo "12. Getting Wordpress"
 
-eval $(wget -P /tmp/ https://wordpress.org/latest.tar.gz 2>&1) $SILENCE
+eval `wget -P /tmp/ https://wordpress.org/latest.tar.gz` 2>&1 $SILENCE
 
 echo "13. Extracting Wordpress"
 
@@ -169,7 +169,8 @@ require_once(ABSPATH . 'wp-settings.php');" > /var/www/html/wp-config.php
 echo "15. Setup MySQL Wordpress tables"
 
 eval mysql -u "root" -p${MYSQL_PASSWORD} -e "CREATE DATABASE ${WORDPRESS_DB_NAME}" $SILENCE
-eval mysql -u "root" -p${MYSQL_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}' IDENTIFIED BY '${WORDPRESS_DB_USER_PASSWORD}'" $SILENCE
+eval mysql -u "root" -p${MYSQL_PASSWORD} -e "CREATE USER '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}' IDENTIFIED BY '${WORDPRESS_DB_USER_PASSWORD}'" $SILENCE
+eval mysql -u "root" -p${MYSQL_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${WORDPRESS_DB_USER}'@'${WORDPRESS_DB_HOST}'" $SILENCE
 eval mysql -u "root" -p${MYSQL_PASSWORD} -e "FLUSH PRIVILEGES" $SILENCE
 
 echo "16. Restarting Apache and MySQL"
