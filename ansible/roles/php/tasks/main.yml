@@ -1,12 +1,14 @@
 ---
-- name: Ensure mysql packages are installed
+- name: Ensure php packages are installed
   apt:
-    name: {{item}}
+    name: "{{ item }}"
     state: present
   with_items:
-    - php7.2
-    - php7.2-mysql
-    - php7.2-gd
-    - php7.2-json
-    - php7.2-mbstrin
+    - php7.0
+    - php7.0-mysql
+    - php7.0-gd
+    - php7.0-json
+    - php7.0-mbstring
+    - php7.0-mysql
+    - libapache2-mod-php7.0
     - phpmyadmin
