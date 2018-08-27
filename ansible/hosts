@@ -1,2 +1,7 @@
-[all]
+[local]
 localhost
+
+[slave-server]
+
+
+    

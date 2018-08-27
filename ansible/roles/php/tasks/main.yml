@@ -1,4 +1,8 @@
 ---
+- name: Setup slave server with Python for ansible
+    pre_tasks:
+     - name: 'install python'
+       raw: 'sudo apt-get -y install python'
 - name: Ensure php packages are installed
   apt:
     name: "{{ item }}"
