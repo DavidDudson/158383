@@ -23,4 +23,4 @@ cd ansible
 sudo ansible-playbook -i ./hosts site.yml   # Run the PlayBook
 
 echo "All done!!"                                   
-echo "Copy and paste the IP address shown in the AWS Managment console for "Slave-Server". Its under the column 'IPv4 Public IP'
+echo "Copy and paste the IP address shown in the AWS Managment console for "Slave-Server". Its under the column 'IPv4 Public IP'"
