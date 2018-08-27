@@ -22,5 +22,5 @@ aws configure                              # For adding AWS key
 cd ansible
 sudo ansible-playbook -i ./hosts site.yml   # Run the PlayBook
 
-echo "All done!!"                           # Display the IP address        
+echo "All done!!"                                   
 echo "Copy and paste the IP address shown in the AWS Managment console for "Slave-Server". Its under the column 'IPv4 Public IP'
