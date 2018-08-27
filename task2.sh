@@ -23,5 +23,4 @@ cd ansible
 sudo ansible-playbook -i ./hosts site.yml   # Run the PlayBook
 
 echo "All done!!"                           # Display the IP address        
-echo "Copy and paste the IP address shown below into your Web Browser to access Wordpress:"
-curl ipecho.net/plain ; echo
+echo "Copy and paste the IP address shown in the AWS Managment console for "Slave-Server". Its under the column 'IPv4 Public IP'
