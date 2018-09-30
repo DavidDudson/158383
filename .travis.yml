@@ -11,7 +11,7 @@ jobs:
   include:
    - name: "Build containers"
      script:
-       - 'container_id=$(mktemp)''
+       - 'container_id=$(mktemp)'
        - 'sudo docker run --detach --privileged ass2:ansible > "${container_id}"'
    - stage: linting
      name: "Check ansible playbook"
