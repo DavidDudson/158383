@@ -5,7 +5,7 @@ services:
 
 # Use docker images which include systemd for valid testing
 before_install:
-  - 'sudo docker pull ass2
+  - 'sudo docker pull ass2'
   - 'sudo docker build --no-cache --rm --file=assignment2/Dockerfile --tag=ass2:ansible travis'
 
 jobs:
