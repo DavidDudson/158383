@@ -9,10 +9,10 @@ before_install:
 
 jobs:
   include:
-   - stage: prepare
-     script: container_id=$(mktemp)
-   - name: "Download containers"
-     script: 'sudo docker run --detach --privileged ass2:ansible > "${container_id}"'
+   - name: "Build containers"
+     script:
+       - 'container_id=$(mktemp)''
+       - 'sudo docker run --detach --privileged ass2:ansible > "${container_id}"'
    - stage: linting
      name: "Check ansible playbook"
      script: 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -i hosts --connection=local ./ansible/site.yml --syntax-check'
