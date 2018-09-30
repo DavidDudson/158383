@@ -22,10 +22,10 @@ jobs:
        - 'sudo docker run --detach --privileged ass2:ansible > "${container_id}"'
    - stage: linting
      name: "Check ansible playbook"
-     script: 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -i hosts --connection=local ./ansible/site.yml --syntax-check'
+     script: 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v -i hosts --connection=local ./ansible/site.yml --syntax-check'
    - stage: test
      name: Test single node Wordpress playbook
-     script: 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -i hosts --connection=local ./ansible/site.yml'
+     script: 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v -i hosts --connection=local ./ansible/site.yml'
    - stage: cleanup
      name: "rm containers"
      script: 'sudo docker rm -f "$(cat ${container_id})"'
