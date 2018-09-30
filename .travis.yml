@@ -5,7 +5,7 @@ services:
 
 # Use docker images which include systemd for valid testing
 before_install:
-  - 'sudo docker build --no-cache --rm --file=assignment2/Dockerfile --tag=ass2:ansible'
+  - 'sudo docker build --no-cache --rm --tag=ass2:ansible' assignment2
 
 jobs:
   include:
