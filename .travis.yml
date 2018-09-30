@@ -7,9 +7,16 @@ services:
 before_install:
   - 'sudo docker build --no-cache --rm --tag=ass2:ansible assignment2'
 
+stages:
+  - prepare
+  - linting
+  - test
+  - cleanup
+
 jobs:
   include:
-   - name: "Build containers"
+   - stage: prepare
+     name: "Build containers"
      script:
        - 'container_id=$(mktemp)'
        - 'sudo docker run --detach --privileged ass2:ansible > "${container_id}"'
